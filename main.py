@@ -1,19 +1,27 @@
-## Take input from user
+import re
+import os # This is used to save files
 
-## Split entered input into a substring of arrays
-
-## Compare to a "dictionary" of values
-## e.g Letter = 1, Symbol = 2, Exceptions = 3
-
-
-## Then, save results to a file by creating a directory called resultss
 
 def checkPassword(userPassword):
+    # Check for Special Characters
+    checkSpecialCharacters = re.findall("[^a-zA-Z0-9]",userPassword)
+
+    # Check for Numbers
+    checkNumbers = re.findall("[0-9]", userPassword)
+
+    # Check for English Characters
+    checkCharacters = re.findall("[a-zA-Z]", userPassword)
+
     # Debug Code
-    for i in range(len(userPassword)):
-        print(userPassword[i])
+    print(len(checkSpecialCharacters))
+    print(len(checkNumbers))
+    print(len(checkCharacters))
+
+    securityScore = (len(checkSpecialCharacters) * 3) + (len(checkNumbers) * 2) + (len(checkCharacters * 1))
+    print("The password security score is: ") + str(securityScore)
 
 
 ## Main Code
 checkPassword(input("Please enter password to be tested: "))
+
 
