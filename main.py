@@ -1,8 +1,12 @@
 import re
 import os # This is used to save files
+import hashlib
 
 
 def checkPassword(userPassword):
+    numberMultiplier = 2
+    specialCharacterMultiplier = 3
+
     # Check for Special Characters
     checkSpecialCharacters = re.findall("[^a-zA-Z0-9]",userPassword)
 
@@ -12,13 +16,30 @@ def checkPassword(userPassword):
     # Check for English Characters
     checkCharacters = re.findall("[a-zA-Z]", userPassword)
 
-    # Debug Code
-    print(len(checkSpecialCharacters))
-    print(len(checkNumbers))
-    print(len(checkCharacters))
+    securityScore = len(checkCharacters) + (numberMultiplier * len(checkNumbers)) + (specialCharacterMultiplier * len(checkSpecialCharacters))
+    print(f"The password security score is: {securityScore}")
 
-    securityScore = (len(checkSpecialCharacters) * 3) + (len(checkNumbers) * 2) + (len(checkCharacters * 1))
-    print("The password security score is: ") + str(securityScore)
+    saveSecurityScore(securityScore)
+
+
+def saveSecurityScore(securityScore):
+    print("Saving security score..") 
+    dirName = "security_score"
+
+    # Makes Directory
+    try:
+        os.mkdir(dirName)
+        print(f'Directory {dirName} created successfully!')
+    except FileExistsError:
+        print(f'Directory {dirName} already exists! Updating score file..')
+    except PermissionError:
+        print(f'Permission denied, unable to create {dirName} directory.')
+    except Exception as e:
+        print(f'An error occured: {e}')
+
+    # Saves scores
+    with open("security_score/securityScores.txt", "a") as file:
+        file.write(f"\nSecurity Score: {securityScore}")
 
 
 ## Main Code
