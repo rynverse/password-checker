@@ -4,8 +4,8 @@ import hashlib
 
 
 def checkPassword(userPassword):
-    numberMultiplier = 2
     specialCharacterMultiplier = 3
+    numberMultiplier = 2
 
     # Check for Special Characters
     checkSpecialCharacters = re.findall("[^a-zA-Z0-9]",userPassword)
@@ -54,9 +54,8 @@ def saveSecurityScore(securityScore,hashedPass):
 
     # Saves scores
     with open("security_score/securityScores.txt", "a") as file:
-        file.write(f"\nSecurity Score: {securityScore}")
-        file.write(f"\n Strength: {strength}")
-        file.write(f"\n Hashed Password: {hashedPass}")
+        file.write(f"\nSecurity Score: {securityScore}\n Strength: {strength}\n Hashed Password: {hashedPass}")
+
 
 ## Main Code
 checkPassword(input("Please enter password to be tested: "))
