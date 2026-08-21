@@ -1,4 +1,4 @@
-import re
+import re # Regex
 import os # This is used to save files
 import hashlib
 
@@ -27,6 +27,17 @@ def checkPassword(userPassword):
 
 
 def saveSecurityScore(securityScore,hashedPass):
+    
+    if securityScore < 5:
+        print("Weak Password")
+        strength = 1
+    elif securityScore >=5 & securityScore < 10:
+        print("Medium Stregnth Password")
+        strength = 2 
+    else:
+        print("Strong Password")
+        strength = 3
+        
     print("Saving security score..") 
     dirName = "security_score"
 
@@ -41,12 +52,11 @@ def saveSecurityScore(securityScore,hashedPass):
     except Exception as e:
         print(f'An error occured: {e}')
 
-
     # Saves scores
     with open("security_score/securityScores.txt", "a") as file:
         file.write(f"\nSecurity Score: {securityScore}")
+        file.write(f"\n Strength: {strength}")
         file.write(f"\n Hashed Password: {hashedPass}")
-
 
 ## Main Code
 checkPassword(input("Please enter password to be tested: "))
