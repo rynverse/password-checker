@@ -19,10 +19,14 @@ def checkPassword(userPassword):
     securityScore = len(checkCharacters) + (numberMultiplier * len(checkNumbers)) + (specialCharacterMultiplier * len(checkSpecialCharacters))
     print(f"The password security score is: {securityScore}")
 
-    saveSecurityScore(securityScore)
+    # Hash the password
+    encodedPass = userPassword.encode('utf-8')
+    hashedPass = hashlib.sha256(encodedPass).hexdigest()
+
+    saveSecurityScore(securityScore,hashedPass)
 
 
-def saveSecurityScore(securityScore):
+def saveSecurityScore(securityScore,hashedPass):
     print("Saving security score..") 
     dirName = "security_score"
 
@@ -37,9 +41,11 @@ def saveSecurityScore(securityScore):
     except Exception as e:
         print(f'An error occured: {e}')
 
+
     # Saves scores
     with open("security_score/securityScores.txt", "a") as file:
         file.write(f"\nSecurity Score: {securityScore}")
+        file.write(f"\n Hashed Password: {hashedPass}")
 
 
 ## Main Code
