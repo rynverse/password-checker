@@ -4,8 +4,11 @@ import hashlib
 
 
 def checkPassword(userPassword):
+    trailingCharacterMultiplier = 4
     specialCharacterMultiplier = 3
     numberMultiplier = 2
+    repeatedCharacterMultiplier = -1
+
 
     # Check for Special Characters
     checkSpecialCharacters = re.findall("[^a-zA-Z0-9]",userPassword)
@@ -16,7 +19,26 @@ def checkPassword(userPassword):
     # Check for English Characters
     checkCharacters = re.findall("[a-zA-Z]", userPassword)
 
-    securityScore = len(checkCharacters) + (numberMultiplier * len(checkNumbers)) + (specialCharacterMultiplier * len(checkSpecialCharacters))
+    # Special Case Checkers
+    checkTrailingCharacters = re.findall("(?<=[0-9A-Z])[a-z](?=[0-9A-Z])", userPassword)
+
+    # Check for Repeated Characters
+    checkRepeatedCharacters = re.findall("(.)\1{2,2}", userPassword)
+
+    ## Score Breakdown
+    print("Score Breakdown: ")
+    print(f" English Characters: {len(checkCharacters)} ({len(checkCharacters)})")
+    print(f" Numbers: {len(checkNumbers)} ({len(checkNumbers * numberMultiplier)})")
+    print(f" Special Characters: {len(checkSpecialCharacters)} ({len(checkSpecialCharacters * specialCharacterMultiplier)})")
+    print(f" Trailing Characters: {len(checkTrailingCharacters)} ({len(checkTrailingCharacters * trailingCharacterMultiplier)})")
+    print(f" Repeated Characters: {len(checkRepeatedCharacters)} ({len(checkRepeatedCharacters)* repeatedCharacterMultiplier})")
+
+    # Can turn these into variables later.
+
+    # Additions for security score
+    securityScore = len(checkCharacters) + (numberMultiplier * len(checkNumbers)) + (specialCharacterMultiplier * len(checkSpecialCharacters)) + len(checkTrailingCharacters * trailingCharacterMultiplier)
+    # Subtractions for security score
+    securityScore -= len(checkRepeatedCharacters *repeatedCharacterMultiplier)
     print(f"The password security score is: {securityScore}")
 
     # Hash the password
@@ -27,12 +49,11 @@ def checkPassword(userPassword):
 
 
 def saveSecurityScore(securityScore,hashedPass):
-    
     if securityScore < 5:
         print("Weak Password")
         strength = 1
     elif securityScore >=5 & securityScore < 10:
-        print("Medium Stregnth Password")
+        print("Medium Strength Password")
         strength = 2 
     else:
         print("Strong Password")
