@@ -8,8 +8,14 @@ I made this custom Python script to learn more about hashing and file handling i
 This gets the "score" of the password, which is then translated into strong/medium/weak..
 The score, grading and a hashed version of the password is then saved in the `securityScores.txt` file within the `security_score` directory. A breakdown of the score is also provided in the terminal, and may also be added mto the `securityScores.txt` file in the future, if needed.
 
+As of a recent update, this script uses the `pwnedpasswords` API to check whether an inputted password is breached, and applies a significant negative multiplier to `securityScore`.
+
+
+### Prerequisites
+- Requires `requests` module (use the command `pip install requests`)
+
 ### Limitations
-Currently, this password checker has no way of identifying commonly used passwords and accounting for them.
+This project has not been well documented, this will be addressed in the future.
 
 This is an active work in progress (as of 24/08/2026) and I will be exploring ways in which to improve this until I am fully satisfied with its state.
 

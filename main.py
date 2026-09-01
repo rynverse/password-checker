@@ -1,6 +1,7 @@
 import re # Regex
 import os # This is used to save files
 import hashlib
+import requests
 
 
 def checkPassword(userPassword):
@@ -8,6 +9,7 @@ def checkPassword(userPassword):
     specialCharacterMultiplier = 3
     numberMultiplier = 2
     repeatedCharacterMultiplier = -1
+    breachedMultiplier = 100
 
 
     # Check for Special Characters
@@ -25,13 +27,6 @@ def checkPassword(userPassword):
     # Check for Repeated Characters
     checkRepeatedCharacters = re.findall("(.)\1{2,2}", userPassword)
 
-    ## Score Breakdown
-    print("Score Breakdown: ")
-    print(f" English Characters: {len(checkCharacters)} ({len(checkCharacters)})")
-    print(f" Numbers: {len(checkNumbers)} ({len(checkNumbers * numberMultiplier)})")
-    print(f" Special Characters: {len(checkSpecialCharacters)} ({len(checkSpecialCharacters * specialCharacterMultiplier)})")
-    print(f" Trailing Characters: {len(checkTrailingCharacters)} ({len(checkTrailingCharacters * trailingCharacterMultiplier)})")
-    print(f" Repeated Characters: {len(checkRepeatedCharacters)} ({len(checkRepeatedCharacters)* repeatedCharacterMultiplier})")
 
     # Can turn these into variables later.
 
@@ -39,11 +34,38 @@ def checkPassword(userPassword):
     securityScore = len(checkCharacters) + (numberMultiplier * len(checkNumbers)) + (specialCharacterMultiplier * len(checkSpecialCharacters)) + len(checkTrailingCharacters * trailingCharacterMultiplier)
     # Subtractions for security score
     securityScore -= len(checkRepeatedCharacters *repeatedCharacterMultiplier)
-    print(f"The password security score is: {securityScore}")
 
     # Hash the password
     encodedPass = userPassword.encode('utf-8')
-    hashedPass = hashlib.sha256(encodedPass).hexdigest()
+    hashedPass = hashlib.sha1(encodedPass).hexdigest().upper() # Upper as pwnedpasswords returns in capital letters
+    prefix = hashedPass[:5]
+    suffix = hashedPass[5:]
+
+    # Explanation:
+    # The API takes in the PREFIX of the hashed password, and returns matching SUFFIXES, alongside how many breaches
+    # We also need to remove the breach count 
+    matches = requests.get(f"https://api.pwnedpasswords.com/range/{prefix}") # Returns hashes that are similar, now we manually check
+    returnedSuffixes = set()
+    for line in matches.text.splitlines():
+        parts = line.split(":")
+        returnedSuffixes.add(parts[0])
+
+    if suffix in returnedSuffixes:
+        breached = True
+        securityScore -= breachedMultiplier
+    else:
+        breached = False
+    
+    
+    ## Score Breakdown
+    print("Score Breakdown: ")
+    print(f" English Characters: {len(checkCharacters)} ({len(checkCharacters)})")
+    print(f" Numbers: {len(checkNumbers)} ({len(checkNumbers * numberMultiplier)})")
+    print(f" Special Characters: {len(checkSpecialCharacters)} ({len(checkSpecialCharacters * specialCharacterMultiplier)})")
+    print(f" Trailing Characters: {len(checkTrailingCharacters)} ({len(checkTrailingCharacters * trailingCharacterMultiplier)})")
+    print(f" Repeated Characters: {len(checkRepeatedCharacters)} ({len(checkRepeatedCharacters)* repeatedCharacterMultiplier})")
+    print(f" Has this password been breached? {breached}")
+    print(f"The password security score is: {securityScore}")
 
     saveSecurityScore(securityScore,hashedPass)
 
