@@ -1,21 +1,31 @@
 # Ryn's Password Strength Checker
 
 ### Overview
-I made this custom Python script to learn more about hashing and file handling in Python, as well as (unintentionally) learning more about Regular Expressions. This script takes a text input to determine the strength of a given password, by using the following calculation:
+This is a Python script that uses a scoring system based the number of characters/numbers and specific characteristics of a password, as well as comparing it to known breached password. I made this Python Script to learn more about file handling and Regular Expressions, however it grew into a much larger project which uses the `pwnedpasswords` API and `haslib`.
 
-`number of characters * respective multiplier ± (special condition * special modifier)` 
+The scoring can be summarised as `score ± multiplier`
 
-This gets the "score" of the password, which is then translated into strong/medium/weak..
-The score, grading and a hashed version of the password is then saved in the `securityScores.txt` file within the `security_score` directory. A breakdown of the score is also provided in the terminal, and may also be added mto the `securityScores.txt` file in the future, if needed.
+The current Multipliers are:
+| Multiplier | Score | Description | 
+| ------------- | ------------- | ------------- |
+| `breachedMultiplier` | -100 | -1-- score if the password was found in a breach |
+| `repeatedCharacterMultiplier` | -1 | -1 Score per repeated character `aa` `bb` for example |
+| `characterMultiplier` | +1 | +1 Score per character in the given password |
+| `numberMultiplier` | +2 | +2 Score per number in the given password |
+| `specialCharacterMultiplier` | +3 | +3 Score per special character (`!"£$%^&*()` for example) in the given password |
+| `trailingCharacterMultiplier` | +4 | +4 Score per trailing special/capital character. For example `&s&` or `)bA` |
 
-As of a recent update, this script uses the `pwnedpasswords` API to check whether an inputted password is breached, and applies a significant negative multiplier to `securityScore`.
+The script then sends the (uppercase) hashed password's prefix to the `pwnedpasswords` API, which returns the suffix of hashes that matched the prefix. The script then removes the number of times a password has been breached, and compares the hashes with the given password - to determine whether it has been breached. If it has been breached, the `breachedMultiplier` is subtracted from the score.
 
+With the implementation of the `pwnedpasswords` API, I am currently happy with its functional state and have no current plans for future updates.
 
 ### Prerequisites
+- Requires `pip`, see installation guide [here](https://pip.pypa.io/en/stable/installation/)
 - Requires `requests` module (use the command `pip install requests`)
 
-### Limitations
-This project has not been well documented, this will be addressed in the future.
+### What I learnt from this project
+Initially, I had learnt how to save password scores to a new file/directory, which can be useful for dumping logs made in Python in the future (planned project) as well as learning about the various types of hashing (SHA-1, RSA). 
 
-This is an active work in progress (as of 24/08/2026) and I will be exploring ways in which to improve this until I am fully satisfied with its state.
+Hashing is incredibly useful for saving passwords as the hash is unreversible, meaning a leak of a hash does not immediately lead to passwords being discovered. This is incredibly useful for authenticating users, as all you need to do to check the result of the hash function and compare it to the hash stored on the server to authenticate a user, if it matches.
 
+Furthermore, I learnt how to send `GET` requests using the `request` module in Python, and converting the given result back into something useful. This is incredibly useful knowledge, as APIs can be misused if not configured correctly and I am gaining an understanding of how they work - which may help in the cybersecurity field.

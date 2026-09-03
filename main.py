@@ -1,14 +1,15 @@
 import re # Regex
 import os # This is used to save files
-import hashlib
-import requests
+import hashlib # For hashing
+import requests # Used to send API Request
 
 
 def checkPassword(userPassword):
-    trailingCharacterMultiplier = 4
-    specialCharacterMultiplier = 3
+    # Multipliers
+    repeatedCharacterMultiplier = 1
     numberMultiplier = 2
-    repeatedCharacterMultiplier = -1
+    specialCharacterMultiplier = 3
+    trailingCharacterMultiplier = 4
     breachedMultiplier = 100
 
 
@@ -27,15 +28,12 @@ def checkPassword(userPassword):
     # Check for Repeated Characters
     checkRepeatedCharacters = re.findall("(.)\1{2,2}", userPassword)
 
-
-    # Can turn these into variables later.
-
     # Additions for security score
     securityScore = len(checkCharacters) + (numberMultiplier * len(checkNumbers)) + (specialCharacterMultiplier * len(checkSpecialCharacters)) + len(checkTrailingCharacters * trailingCharacterMultiplier)
     # Subtractions for security score
-    securityScore -= len(checkRepeatedCharacters *repeatedCharacterMultiplier)
+    securityScore -= len(checkRepeatedCharacters * repeatedCharacterMultiplier)
 
-    # Hash the password
+    # Hash the password and compare it to pwnedpasswords API
     encodedPass = userPassword.encode('utf-8')
     hashedPass = hashlib.sha1(encodedPass).hexdigest().upper() # Upper as pwnedpasswords returns in capital letters
     prefix = hashedPass[:5]
@@ -46,11 +44,12 @@ def checkPassword(userPassword):
     # We also need to remove the breach count 
     matches = requests.get(f"https://api.pwnedpasswords.com/range/{prefix}") # Returns hashes that are similar, now we manually check
     returnedSuffixes = set()
-    for line in matches.text.splitlines():
+    for line in matches.text.splitlines(): # Seperates the breach count from the response
         parts = line.split(":")
         returnedSuffixes.add(parts[0])
 
-    if suffix in returnedSuffixes:
+# Checks if the password is breached
+    if suffix in returnedSuffixes: 
         breached = True
         securityScore -= breachedMultiplier
     else:
@@ -71,6 +70,7 @@ def checkPassword(userPassword):
 
 
 def saveSecurityScore(securityScore,hashedPass):
+    # Compares security score to predetermined values
     if securityScore < 5:
         print("Weak Password")
         strength = 1
