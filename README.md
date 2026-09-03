@@ -8,7 +8,7 @@ The scoring can be summarised as `score ± multiplier`
 The current Multipliers are:
 | Multiplier | Score | Description | 
 | ------------- | ------------- | ------------- |
-| `breachedMultiplier` | -100 | -1-- score if the password was found in a breach |
+| `breachedMultiplier` | -100 | -100 score if the password was found in a breach |
 | `repeatedCharacterMultiplier` | -1 | -1 Score per repeated character `aa` `bb` for example |
 | `characterMultiplier` | +1 | +1 Score per character in the given password |
 | `numberMultiplier` | +2 | +2 Score per number in the given password |
