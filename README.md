@@ -24,8 +24,11 @@ With the implementation of the `pwnedpasswords` API, I am currently happy with i
 - Requires `requests` module (use the command `pip install requests`)
 
 ### What I learnt from this project
-Initially, I had learnt how to save password scores to a new file/directory, which can be useful for dumping logs made in Python in the future (planned project) as well as learning about the various types of hashing (SHA-1, RSA). 
+Initially, I had learnt how to save password scores to a new file/directory, which can be useful for dumping logs made in Python in the future (planned project) as well as learning about the various types of hashing like SHA-1. 
 
-Hashing is incredibly useful for saving passwords as the hash is unreversible, meaning a leak of a hash does not immediately lead to passwords being discovered. This is incredibly useful for authenticating users, as all you need to do to check the result of the hash function and compare it to the hash stored on the server to authenticate a user, if it matches.
+Hashing is incredibly useful for saving passwords as the hash is very hard to reverse, meaning a leak of a hash does not immediately lead to passwords being discovered. This is incredibly useful for authenticating users, as all you need to do to check the result of the hash function and compare it to the hash stored on the server to authenticate a user, if it matches. It is best practice to use modern hashing algorithms like SHA-256 or SHA-3 when storing passwords for example.
 
 Furthermore, I learnt how to send `GET` requests using the `request` module in Python, and converting the given result back into something useful. This is incredibly useful knowledge, as APIs can be misused if not configured correctly and I am gaining an understanding of how they work - which may help in the cybersecurity field.
+
+### Limitations
+Password scoring is not a great way of identifying the strength of a password, and this project should not be treated as a way to properly see the strength of your password. There are more modern solutions that use entropy (randomness) to determine the strength of passwords, as well as using the above.
